@@ -25,20 +25,31 @@ llm = GigaChat(
     timeout=6000,
     model="GigaChat-Pro"
 )
-chat = Chat(llm)
+chats = {}
 
 
 
-@app.post("/ask")
-async def ask(message: Message):
-    result = chat(message.content)
+@app.post("api/v1/ask/{grade}/{category}/{type}")
+async def ask(grade, category, type, message: Message):
+    if (grade, category, type) not in chats:
+        chats[(grade, category, type)] = Chat(llm)
+    result = await chats[(grade, category, type)](message.content)
     return {"message": "OK", "content": result}
 
-@app.get("/get_history")
-async def get_history():
-    return {"message": chat.messages}
+@app.get("api/v1/get_history/{grade}/{category}/{type}")
+async def get_history(grade, category, type):
+    try:
+        result = {"message": chats[(grade, category, type)].messages}
+    except:
+        result = {"message": []}
+    return result
 
-@app.get("/clear")
-async def clear():
-    chat.clear()
-    return {"message": "history cleared"}
+@app.get("api/v1/clear/{grade}/{category}/{type}")
+async def clear(grade, category, type):
+    try:
+        chats[(grade, category, type)].clear()
+        result = {"message": "history cleared"}
+    except:
+        result = {"message": "chat doesn't exist"}
+    return result
+    
