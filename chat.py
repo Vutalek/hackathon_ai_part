@@ -12,11 +12,12 @@ class Chat:
         self.messages = []
         self.messages.append(SystemMessage(self.prompt))
 
-    async def __call__(self, message: str) -> str:
+    def __call__(self, message: str) -> str:
         self.messages.append(HumanMessage(message))
-        result = await self.llm.ainvoke(self.messages)
+        result = self.llm.invoke(self.messages)
         self.messages.append(result)
         return str(result.content)
     
     def clear(self):
         self.messages.clear()
+        self.messages.append(SystemMessage(self.prompt))
