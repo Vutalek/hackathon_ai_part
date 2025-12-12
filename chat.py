@@ -1,7 +1,7 @@
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
-from prompts import HR_PROMPT
+from prompts import HR_PROMPT, GRADE_MAPPING, CATEGORY_MAPPING, TYPE_MAPPING
 
 
 class Chat:
@@ -13,7 +13,11 @@ class Chat:
         type: str
     ):
         self.llm = llm
-        self.prompt = HR_PROMPT.format(grade=grade, category=category, type=type)
+        self.prompt = HR_PROMPT.format(
+            grade=GRADE_MAPPING[grade], 
+            category=CATEGORY_MAPPING[category], 
+            type=TYPE_MAPPING[type]
+        )
         self.messages = []
         self.messages.append(SystemMessage(self.prompt))
 
