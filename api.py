@@ -46,7 +46,7 @@ chats = {}
 @app.post("/api/v1/ask/{grade}/{category}/{type}")
 async def ask(grade: str, category: str, type: str, message: Message):
     if (grade, category, type) not in chats:
-        chats[(grade, category, type)] = Chat(llm)
+        chats[(grade, category, type)] = Chat(llm, grade, category, type)
     result = await chats[(grade, category, type)](message.content)
     return {"message": "OK", "content": result}
 
